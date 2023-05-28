@@ -1,11 +1,7 @@
 local Players = game:GetService('Players')
 
-local ServerStorage = game:GetService("ServerStorage")
-local ServerModules = require(ServerStorage:WaitForChild("Modules"))
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedCore = require(ReplicatedStorage:WaitForChild('Core'))
-local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
 
 local ReplicatedData = ReplicatedCore.ReplicatedData
 
@@ -14,18 +10,20 @@ local SystemsContainer = {}
 -- // Module // --
 local Module = {}
 
+-- When the player joins the game, ...
 function Module:OnPlayerAdded( LocalPlayer )
 	print('Loading', LocalPlayer.Name, "'s profile data.")
 
-	local profile = SystemsContainer.DataService:_LoadDataFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataService:_LoadDataFromPlayer( LocalPlayer )
 
-	ReplicatedData:SetData('PlayerData', profile.Data, {LocalPlayer})
+	ReplicatedData:SetData('PlayerData', playerProfile.Data, {LocalPlayer})
 
-	return profile
+	return playerProfile
 end
 
+-- When the player leaves the game, ...
 function Module:OnPlayerRemoving( LocalPlayer )
-	-- any last edits?
+	-- TODO: any last edits?
 	SystemsContainer.DataService:ReleasePlayer( LocalPlayer )
 end
 
