@@ -23,6 +23,8 @@ local function SearchForNameAndClass(Name, Class, Parent)
 	return nil
 end
 
+local VALID_REMOTE_TYPES = {'RemoteEvent', 'RemoteFunction', 'BindableEvent', 'BindableFunction'}
+
 -- // Module // --
 local Module = {}
 
@@ -31,6 +33,7 @@ if RunService:IsServer() then
 	local serverRemoteFolder = GetOrCreateFolder(game:GetService('ServerStorage'))
 
 	function Module:GetRemote(remoteName : string, remoteType : string, isClientBased : boolean?)
+		assert( table.find(VALID_REMOTE_TYPES, remoteType), 'Passed RemoteType is not valid.' )
 		local targetParent = (isClientBased and serverRemoteFolder or clientRemoteFolder)
 		local remoteObject = SearchForNameAndClass(remoteName, remoteType, targetParent)
 		if not remoteObject then
@@ -40,10 +43,12 @@ if RunService:IsServer() then
 		end
 		return remoteObject
 	end
+
 else
 	local ClientRemotes = ReplicatedStorage:WaitForChild(remoteContainerName)
 
 	function Module:GetRemote(remoteName : string, remoteType : string, isClientBased : boolean?)
+		assert( table.find(VALID_REMOTE_TYPES, remoteType), 'Passed RemoteType is not valid.' )
 		if isClientBased then
 			local Remote = SearchForNameAndClass(remoteName, remoteType, ReplicatedStorage)
 			if not Remote then
