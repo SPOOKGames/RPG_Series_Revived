@@ -23,6 +23,7 @@ end
 -- // Module // --
 local Module = {}
 
+-- Play a random sound with volume fade
 function Module:PlayRandomSong()
 	local RandomId = MusicData.SongIds[ Random.new():NextInteger(1, #MusicData.SongIds) ]
 	while CurrentSoundId == RandomId do
@@ -42,7 +43,22 @@ function Module:PlayRandomSong()
 	TweenService:Create(MusicSoundInstance, MUSIC_FADE_TWEEN, {Volume = CurrentSoundData.Properties.Volume}):Play()
 end
 
+-- Yield until the correct timing before crossfading songs
+function Module:AwaitSongCrossfadeTime()
+	if not MusicSoundInstance.IsLoaded then
+		MusicSoundInstance.Loaded:Wait()
+	end
+	task.wait( MusicSoundInstance.TimeLength - MUSIC_FADE_TWEEN.Time )
+end
+
 function Module:Start()
+
+	task.defer(function()
+		while true do
+			Module:PlayRandomSong()
+			Module:AwaitSongCrossfadeTime()
+		end
+	end)
 
 end
 

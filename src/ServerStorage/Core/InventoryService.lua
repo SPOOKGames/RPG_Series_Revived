@@ -1,4 +1,4 @@
-
+local Players = game:GetService('Players')
 local HttpService = game:GetService('HttpService')
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -8,25 +8,43 @@ local ItemsConfigModule = ReplicatedModules.Data.Items
 
 local SystemsContainer = {}
 
+local UUIDToItemIdCache = {}
+
 -- // Module // --
 local Module = {}
 
+-- Create the generic item stack data
 function Module:CreateGenericItemStackData( Quantity )
 	return {
 		Quantity = Quantity or 1,
 	}
 end
 
-function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
-	quantity = quantity or 1
-
-	local itemConfig = ItemsConfigModule:GetItemConfig( itemId )
-	if itemConfig then
-		warn('No config for given item id '..tostring(itemId))
+-- Generate the UUID to ItemId cache
+function Module:GenerateUUIDToItemId( LocalPlayer )
+	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	if not profile then
 		return
 	end
 
-	local profile = SystemsContainer.DataService:GetPlayerProfile( LocalPlayer )
+	for itemId, uuidCache in pairs( profile.Data.Inventory ) do
+		for uuid, _ in pairs( uuidCache ) do
+			UUIDToItemIdCache[ LocalPlayer ][ uuid ] = itemId
+		end
+	end
+end
+
+-- Give the target player the amount of items of the given id
+function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
+	quantity = quantity or 1
+
+	local itemConfig = ItemsConfigModule:GetConfigFromId( itemId )
+	if not itemConfig then
+		warn('No item config for the given id: '..tostring(itemId))
+		return
+	end
+
+	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -53,13 +71,43 @@ function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 	while quantity > 0 do
 		local amount = math.min( quantity, itemConfig.MaxQuantity )
 		local newUUID = HttpService:GenerateGUID(false)
+		UUIDToItemIdCache[ LocalPlayer ][ newUUID ] = itemId
 		profile.Data.Inventory[ itemId ][ newUUID ] = Module:CreateGenericItemStackData( amount )
 		quantity -= amount
 	end
+
+	print( profile.Data.Inventory )
+end
+
+function Module:FindItemIdGivenUUID( LocalPlayer, ItemUUID )
+	return UUIDToItemIdCache[ LocalPlayer ][ ItemUUID ]
+end
+
+function Module:OnPlayerAdded( LocalPlayer )
+	UUIDToItemIdCache[ LocalPlayer ] = { }
+
+	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer, true )
+	if not profile then
+		return
+	end
+
+	Module:GenerateUUIDToItemId( LocalPlayer )
+	Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, 'WoodenSword', 3 )
 end
 
 function Module:Start()
+	for _, LocalPlayer in ipairs( Players:GetPlayers() ) do
+		task.defer(function()
+			Module:OnPlayerAdded( LocalPlayer )
+		end)
+	end
+	Players.PlayerAdded:Connect(function( LocalPlayer )
+		Module:OnPlayerAdded( LocalPlayer )
+	end)
 
+	Players.PlayerRemoving:Connect(function(LocalPlayer)
+		UUIDToItemIdCache[ LocalPlayer ] = nil
+	end)
 end
 
 function Module:Init(otherSystems)

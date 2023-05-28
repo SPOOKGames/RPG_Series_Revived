@@ -15,10 +15,7 @@ local function CreateBaseRarityDisplay( TitleText, Description, IconData, Rarity
 	}
 end
 
--- // Module // --
-local Module = {}
-
-Module.DEFAULT_VIEWPORT_PRESETS = {
+local DEFAULT_VIEWPORT_PRESETS = {
 	{
 		CameraCFrame = CFrame.new( Vector3.new(4.5, -0.5, 0), Vector3.new() ),
 		ModelCFrame = CFrame.Angles( math.rad(-90), 0, math.rad(-90) ) * CFrame.Angles(0, math.rad(45), 0),
@@ -28,6 +25,9 @@ Module.DEFAULT_VIEWPORT_PRESETS = {
 		ModelCFrame = CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(-45), 0, 0),
 	},
 }
+
+-- // Module // --
+local Module = {}
 
 Module.Items = {
 
@@ -47,7 +47,7 @@ Module.Items = {
 		MaxQuantity = 1,
 		Rarity = 1,
 
-		Display = CreateBaseRarityDisplay( 'Wooden Sword', 'A Wooden Sword!', Module.DEFAULT_VIEWPORT_PRESETS[1], 1 ),
+		Display = CreateBaseRarityDisplay( 'Wooden Sword', 'A Wooden Sword!', DEFAULT_VIEWPORT_PRESETS[1], 1 ),
 	},
 
 	WoodenBow = {
@@ -67,7 +67,7 @@ Module.Items = {
 		MaxQuantity = 1,
 		Rarity = 1,
 
-		Display = CreateBaseRarityDisplay( 'Wooden Bow', 'Basic Wooden Bow!', Module.DEFAULT_VIEWPORT_PRESETS[2], 1 ),
+		Display = CreateBaseRarityDisplay( 'Wooden Bow', 'Basic Wooden Bow!', DEFAULT_VIEWPORT_PRESETS[2], 1 ),
 	},
 
 }

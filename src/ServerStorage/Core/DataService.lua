@@ -15,6 +15,7 @@ local TemplateData = {
 
 	Currency = { Copper = 0, Silver = 0, Gold = 0, Platinum = 0, },
 	Attributes = { },
+	Inventory = { },
 }
 
 local SystemsContainer = {}
@@ -24,7 +25,7 @@ local Module = {}
 
 -- Get the player's profile (optional Yield until present)
 function Module:GetProfileFromPlayer(LocalPlayer, Yield)
-	while (not ProfileCache[LocalPlayer.UserId]) and Yield do
+	while (not ProfileCache[LocalPlayer.UserId]) and Yield and LocalPlayer:IsDescendantOf(Players) do
 		task.wait(0.1)
 	end
 	return ProfileCache[LocalPlayer.UserId]

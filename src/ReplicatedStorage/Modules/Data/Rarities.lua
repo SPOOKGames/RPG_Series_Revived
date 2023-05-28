@@ -1,4 +1,4 @@
-local Module
+local Module = {}
 
 Module.Rarities = {'Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Exclusive', 'Unique', 'Godly'}
 Module.Colors = table.create( #Module.Rarities, Color3.new(1, 1, 1) )
