@@ -3,9 +3,11 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local LocalModules = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("Modules"))
 
+local UserInterfaceUtil = LocalModules.Utility.UserInterface
+
 local Interface = LocalPlayer:WaitForChild('PlayerGui'):WaitForChild('Interface')
-local LeftButtonsFrame = Interface.LeftButtons
-local InventoryFrame = Interface.InventoryFrame
+local LHUDFrame = Interface.LHUD
+local InventoryFrame = Interface.Inventory
 
 local SystemsContainer = {}
 
@@ -15,8 +17,11 @@ local Module = {}
 function Module:Start()
 
 	-- inventory button
-	LeftButtonsFrame.Scroll.Template.Button.Activated:Connect(function()
+	UserInterfaceUtil:CreateActionButton({Parent = LHUDFrame.MButtons.Inventory}).Activated:Connect(function()
 		InventoryFrame.Visible = not InventoryFrame.Visible
+	end)
+	InventoryFrame.CloseButton.Button.Activated:Connect(function()
+		InventoryFrame.Visible = false
 	end)
 	InventoryFrame.Visible = false
 
