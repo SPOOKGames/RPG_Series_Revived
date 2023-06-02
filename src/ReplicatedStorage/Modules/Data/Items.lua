@@ -47,7 +47,7 @@ Module.Items = {
 		MaxQuantity = 1,
 		Rarity = 1,
 
-		Display = CreateBaseRarityDisplay( 'Wooden Sword', 'A Wooden Sword!', DEFAULT_VIEWPORT_PRESETS[1], 1 ),
+		Display = CreateBaseRarityDisplay( 'WOODEN SWORD', 'A Wooden Sword!', DEFAULT_VIEWPORT_PRESETS[1], 1 ),
 	},
 
 	WoodenBow = {
@@ -67,7 +67,7 @@ Module.Items = {
 		MaxQuantity = 1,
 		Rarity = 1,
 
-		Display = CreateBaseRarityDisplay( 'Wooden Bow', 'Basic Wooden Bow!', DEFAULT_VIEWPORT_PRESETS[2], 1 ),
+		Display = CreateBaseRarityDisplay( 'WOODEN BOW', 'Basic Wooden Bow!', DEFAULT_VIEWPORT_PRESETS[2], 1 ),
 	},
 
 }

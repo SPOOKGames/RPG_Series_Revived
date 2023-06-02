@@ -21,6 +21,11 @@
 			"$ignoreUnknownInstances": true,
 			"$path": "src/ServerStorage"
 		},
+		"StarterPack" : {
+			"$className": "StarterPack",
+			"$ignoreUnknownInstances": true,
+			"$path": "src/StarterPack"
+		},
 		"StarterPlayer": {
 			"$className": "StarterPlayer",
 			"$ignoreUnknownInstances": true,

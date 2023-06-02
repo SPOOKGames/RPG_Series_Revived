@@ -55,6 +55,7 @@ function Module:Start()
 
 	task.defer(function()
 		while true do
+			task.wait(1)
 			Module:PlayRandomSong()
 			Module:AwaitSongCrossfadeTime()
 		end

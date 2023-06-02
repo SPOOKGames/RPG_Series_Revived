@@ -11,17 +11,21 @@ function Module:SetupModelForViewport( ClonedModel )
 	if ClonedModel:IsA("Model") and ClonedModel.PrimaryPart then
 		ClonedModel.PrimaryPart.Anchored = true
 	end
+	return ClonedModel
 end
 
 function Module:SetupModelViewport(Viewport, Model, CameraCFrame, ModelCFrame)
-	if not Model then
-		return false, false
+	assert( typeof(Model) == "Instance", "Passed Model must be an Instance." )
+
+	local Camera = Module:ViewportCamera(Viewport)
+	if Viewport:GetAttribute("Current") == Model.Name then
+		return Viewport:FindFirstChild(Model.Name), Camera
 	end
-	Model = Model:Clone()
-	Module:SetupModelForViewport( Model )
+
+	Viewport:SetAttribute("Current", Model.Name)
+	Model = Module:SetupModelForViewport( Model:Clone() )
 	Model:SetPrimaryPartCFrame( ModelCFrame )
 	Model.Parent = Viewport
-	local Camera = Module:ViewportCamera(Viewport)
 	Camera.CFrame = CameraCFrame
 	return Model, Camera
 end

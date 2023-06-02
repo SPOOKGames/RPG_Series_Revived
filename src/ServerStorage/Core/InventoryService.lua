@@ -92,7 +92,6 @@ function Module:OnPlayerAdded( LocalPlayer )
 	end
 
 	Module:GenerateUUIDToItemId( LocalPlayer )
-	Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, 'WoodenSword', 3 )
 end
 
 function Module:Start()
