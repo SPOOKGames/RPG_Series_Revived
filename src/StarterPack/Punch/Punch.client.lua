@@ -4,47 +4,41 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerModule = require(LocalPlayer:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'))
 local PlayerControls = PlayerModule:GetControls()
 
-local AnimationIds = {"rbxassetid://6147296899", "rbxassetid://6147300658", "rbxassetid://6147303386"}
-local ActiveAnimations = {}
-
 local Tool = script.Parent
-local LastCombatTick = tick()
+local CombatConfig = require(Tool:WaitForChild('Config'))
+
+local ActiveAnimations = {}
+local LastCombatTick = time()
 local CurrentCombo = 1
 
-local MINIMUM_INTERVAL_PERIOD = 0.2
-local MOVEMENT_DISABLE_PERIOD = 0.65
-local COMBO_TIMEOUT_PERIOD = 1.1
-
 Tool.Activated:Connect(function()
-	if tick() - LastCombatTick < MINIMUM_INTERVAL_PERIOD then
+	if time() - LastCombatTick < CombatConfig.MINIMUM_INTERVAL_PERIOD then
 		return
 	end
 
-	if tick() - LastCombatTick > COMBO_TIMEOUT_PERIOD then
+	if time() - LastCombatTick > CombatConfig.COMBO_TIMEOUT_PERIOD then
 		CurrentCombo = 1
 	else
 		CurrentCombo += 1
-		if CurrentCombo > #ActiveAnimations then
+		if CurrentCombo > #CombatConfig.ANIMATION_IDS then
 			CurrentCombo = 1
 		end
 	end
 
 	PlayerControls:Disable()
 
-	-- TODO: server damage stuff
-
 	if ActiveAnimations[CurrentCombo] then
 		ActiveAnimations[CurrentCombo]:Play()
 	end
 
 	local CurrentComboValue = CurrentCombo
-	task.delay(MOVEMENT_DISABLE_PERIOD, function()
+	task.delay(CombatConfig.MOVEMENT_DISABLE_PERIOD, function()
 		if CurrentComboValue == CurrentCombo then
 			PlayerControls:Enable()
 		end
 	end)
 
-	LastCombatTick = tick()
+	LastCombatTick = time()
 end)
 
 Tool.Equipped:Connect(function()
@@ -54,7 +48,7 @@ Tool.Equipped:Connect(function()
 		return
 	end
 
-	for _, animationId in ipairs( AnimationIds ) do
+	for _, animationId in ipairs( CombatConfig.ANIMATION_IDS ) do
 		local animationObject = Instance.new('Animation')
 		animationObject.AnimationId = animationId
 		local loadedAnimation = Humanoid.Animator:LoadAnimation( animationObject )

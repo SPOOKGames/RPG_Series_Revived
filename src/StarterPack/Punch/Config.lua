@@ -1,0 +1,8 @@
+
+return {
+	MINIMUM_INTERVAL_PERIOD = 0.3,
+	MOVEMENT_DISABLE_PERIOD = 0.55,
+	COMBO_TIMEOUT_PERIOD = 1.1,
+
+	ANIMATION_IDS = {"rbxassetid://6147296899", "rbxassetid://6147300658", "rbxassetid://6147303386"},
+}

@@ -7,7 +7,6 @@ local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
 
 local EventClass = ReplicatedModules.Classes.Event
-local DebounceModule = ReplicatedModules.Utility.Debounce
 local TableUtility = ReplicatedModules.Utility.Table
 
 local DataRemote = ReplicatedModules.Services.RemoteService:GetRemote('DataRemote', 'RemoteEvent', false)
@@ -168,10 +167,12 @@ if RunService:IsServer() then
 	-- when the player asks to forcively update their data
 	-- if they haven't asked in the last 2 seconds then
 	-- update their data
+	local Debounce = {}
 	DataRemote.OnServerEvent:Connect(function(LocalPlayer)
-		if not DebounceModule(LocalPlayer.Name.."_FORCE_UPDATE", 2) then
+		if Debounce[LocalPlayer.Name] and time() < Debounce[LocalPlayer.Name] then
 			return
 		end
+		Debounce[LocalPlayer.Name] = time() + 2
 		Module:Update( LocalPlayer )
 	end)
 
