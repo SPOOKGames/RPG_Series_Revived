@@ -7,6 +7,7 @@ local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
 
 local CombatCoreModule = ReplicatedCore.CombatCore
 
+local CombatTagService = ReplicatedModules.Services.CombatTagService
 local HitboxService = ReplicatedModules.Services.HitboxService
 local VisualizersModule = ReplicatedModules.Utility.Visualizers
 
@@ -39,14 +40,14 @@ Tool.Activated:Connect(function()
 	local hitParts = HitboxService:GetHitsInBounds( offsetCFrame, hitboxSize, overlapParams )
 	VisualizersModule:BasePart(offsetCFrame, 0.4, {Size = hitboxSize, Transparency = 0.4, Color = Color3.new(0.9,0,0)})
 
-	local doApplyKnockback = true--(CurrentCombo == #CombatConfig.ANIMATION_IDS)
+	local doApplyKnockback = (CurrentCombo == #CombatConfig.ANIMATION_IDS)
 
 	local hitHumanoids = HitboxService:FindHumanoidsFromHits( hitParts )
 	for _, humanoid in ipairs( hitHumanoids ) do
 		if doApplyKnockback then
 			CombatCoreModule:Knockback( humanoid.Parent.PrimaryPart, Tool.Parent:GetPivot().Position )
 		end
-		CombatCoreModule:CombatDamageHumanoid( humanoid, 15, LocalPlayer )
+		CombatTagService:CombatDamageHumanoid( humanoid, 30, LocalPlayer )
 	end
 
 	LastCombatTick = time()

@@ -4,6 +4,17 @@ local SystemsContainer = {}
 -- // Module // --
 local Module = {}
 
+-- Give the target player an amount of experience points
+function Module:GiveExperienceToPlayer( LocalPlayer, Experience )
+	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer(LocalPlayer)
+	if not playerProfile then
+		return
+	end
+
+	playerProfile.Data.Experience += Experience
+	-- TODO: check leveling
+end
+
 -- Give the target player an amount of copper coins.
 function Module:GiveCurrencyToPlayer( LocalPlayer, IncrementCopper )
 	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer(LocalPlayer)

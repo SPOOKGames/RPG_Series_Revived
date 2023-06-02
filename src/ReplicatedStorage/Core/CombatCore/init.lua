@@ -3,26 +3,8 @@ local TweenService = game:GetService('TweenService')
 
 local SystemsContainer = {}
 
-local HumanoidCombatTags = {}
-
 -- // Module // --
 local Module = {}
-
-function Module:ClearHumanoidCombatTags( Humanoid )
-	HumanoidCombatTags[Humanoid] = nil
-end
-
-function Module:GetHumanoidCombatTags( Humanoid )
-	return HumanoidCombatTags[Humanoid]
-end
-
-function Module:CombatTagHumanoid( Humanoid, Damage, OwnerPlayer )
-	if not HumanoidCombatTags[Humanoid] then
-		HumanoidCombatTags[Humanoid] = {}
-	end
-	local oldDamage = (HumanoidCombatTags[Humanoid][OwnerPlayer] or 0)
-	HumanoidCombatTags[Humanoid][OwnerPlayer] = oldDamage + Damage
-end
 
 function Module:ApplyTemporaryMassless( Model, Duration )
 	local MasslessInstances = { }
@@ -79,11 +61,6 @@ function Module:Knockback( PrimaryPart, AttackOrigin )
 	Debris:AddItem(bodyVelocity, 0.45)
 
 	TweenService:Create( bodyVelocity, TweenInfo.new(0.7), {Velocity = Vector3.zero} ):Play()
-end
-
-function Module:CombatDamageHumanoid( Humanoid, Damage, OwnerPlayer )
-	Module:CombatTagHumanoid( Humanoid, Damage, OwnerPlayer )
-	Humanoid:TakeDamage(Damage)
 end
 
 function Module:Start()

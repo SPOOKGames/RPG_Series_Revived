@@ -32,6 +32,7 @@ return function(Parent)
 		return Cache
 	end
 	Cache = {}
+	CacheTable[Parent] = Cache
 
 	-- Require Modules
 	for _, ModuleScript in ipairs( Parent:GetChildren() ) do
@@ -64,6 +65,5 @@ return function(Parent)
 		preLoaded:Start()
 	end
 
-	CacheTable[Parent] = Cache
 	return Cache
 end

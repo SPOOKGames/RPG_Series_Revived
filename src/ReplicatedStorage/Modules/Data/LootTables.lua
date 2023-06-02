@@ -4,6 +4,7 @@ local CurrencyData = require(script.Parent.Currency)
 -- // Module // --
 local Module = {}
 
+-- "Properties = { Enchantments = { }, } }" for items
 Module.PresetLootPools = {
 	CommonRedPotion = {
 		{ ID = 'RedPotion', Quantity = { 1, 2 }, Weight = 3 },
@@ -17,7 +18,7 @@ Module.PresetLootPools = {
 }
 
 Module.EnemyLootTables = {
-	Generic_SlimeA = {
+	Generic_TestDummyTable = {
 
 		Currency = {
 			CurrencyData:ToCopperCoins({Copper = 2}),
@@ -85,9 +86,7 @@ function Module:ResolveEnemyLootTableGeneric( LootTable )
 		warn('LootTable - ITEMS loot not implemented')
 		-- TODO: random items
 		--[[
-			Items = { --, Properties = { Enchantments = { }, } },
-				Module.PresetLootPools.CommonRedPotion,
-			},
+			Items = { Module.PresetLootPools.CommonRedPotion, },
 		]]
 	end
 

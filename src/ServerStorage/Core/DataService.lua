@@ -13,9 +13,13 @@ local TemplateData = {
 	Version = 1,
 	Banned = false,
 
+	Level = 1,
+	Experience = 0,
 	Currency = { Copper = 0, Silver = 0, Gold = 0, Platinum = 0, },
+
 	Attributes = { },
 	Inventory = { },
+	Quests = {},
 }
 
 local SystemsContainer = {}

@@ -28,6 +28,7 @@ function Module:Start()
 			SystemsContainer.InventoryService:GiveQuantityOfItemIdToPlayer( LocalPlayer, 'WoodenSword', 3 )
 		end)
 	end
+
 	Players.PlayerAdded:Connect(function(LocalPlayer)
 		repeat task.wait()
 		until LocalPlayer.Character
@@ -37,7 +38,8 @@ function Module:Start()
 end
 
 function Module:Init(otherSystems)
-	SystemsContainer = otherSystems
+	print(otherSystems)
+	SystemsContainer = otherSystems.ParentSystems
 end
 
 return Module
