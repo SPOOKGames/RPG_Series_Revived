@@ -7,10 +7,7 @@ local function CreateBaseRarityDisplay( TitleText, Description, IconData, Rarity
 	local _, RarityColor = RaritiesData:GetRarityData( Rarity )
 	return {
 		Title = { Text = TitleText, TextColor3 = RarityColor, },
-		Description = {
-			Text = Description,
-			TextColor3 = RarityColor,
-		},
+		Description = { Text = Description, TextColor3 = RarityColor, },
 		Icon = IconData, -- table = viewport data, string/number = icon image id
 	}
 end

@@ -19,7 +19,9 @@ local TemplateData = {
 
 	Attributes = { },
 	Inventory = { },
+
 	Quests = {},
+	CompletedQuests =  {},
 }
 
 local SystemsContainer = {}

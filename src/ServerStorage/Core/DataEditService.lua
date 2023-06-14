@@ -10,9 +10,8 @@ function Module:GiveExperienceToPlayer( LocalPlayer, Experience )
 	if not playerProfile then
 		return
 	end
-
 	playerProfile.Data.Experience += Experience
-	-- TODO: check leveling
+	SystemsContainer.LevelingService:CheckPlayerLeveling( LocalPlayer )
 end
 
 -- Give the target player an amount of copper coins.
