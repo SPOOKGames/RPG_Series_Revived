@@ -9,17 +9,17 @@ local SystemsContainer = {}
 local Module = {}
 
 function Module:CheckPlayerLeveling( LocalPlayer )
-	local PlayerData = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
-	if not PlayerData then
+	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	if not playerProfile then
 		return
 	end
 
-	local requiredExperience = LevelingConfigModule.ReqExperienceToLevel( PlayerData.Level )
-	while (PlayerData.Level + 1 < Module.MaxLevel) and (PlayerData.Experience >= requiredExperience) do
-		PlayerData.Experience -= requiredExperience
-		PlayerData.Level += 1
+	local requiredExperience = LevelingConfigModule.ReqExperienceToLevel( playerProfile.Data.Level )
+	while (playerProfile.Data.Level + 1 < LevelingConfigModule.MaxLevel) and (playerProfile.Data.Experience >= requiredExperience) do
+		playerProfile.Data.Experience -= requiredExperience
+		playerProfile.Data.Level += 1
 		-- TODO: attribute points, skill points, etc
-		requiredExperience = LevelingConfigModule.ReqExperienceToLevel( PlayerData.Level )
+		requiredExperience = LevelingConfigModule.ReqExperienceToLevel( playerProfile.Data.Level )
 	end
 end
 

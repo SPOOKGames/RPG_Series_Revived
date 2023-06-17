@@ -18,30 +18,41 @@ function Module:GiveRewardTableToPlayer( LocalPlayer, RewardsTable )
 	if RewardsTable.Currency then
 		SystemsContainer.DataEditService:GiveCurrencyToPlayer( LocalPlayer, RewardsTable.Currency )
 	end
+
 	if RewardsTable.Experience then
 		SystemsContainer.DataEditService:GiveExperienceToPlayer( LocalPlayer, RewardsTable.Experience )
 	end
 
-	-- TODO: reward table items
-	--[[if RewardsTable.Items then
+	if RewardsTable.Items then
+		for itemId, quantity in pairs( RewardsTable.Items ) do
+			SystemsContainer.InventoryService:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
+		end
+	end
+
+	if RewardsTable.Attributes then
+		for _, attributeId in ipairs( RewardsTable.Attributes ) do
+			SystemsContainer.AttributeService:GiveAttributeToPlayer( LocalPlayer, attributeId )
+		end
+	end
+
+	--[[if RewardsTable.Skills then
+
 	end]]
 
-	--[[if LootTable.Attributes then
-	end]]
+	if RewardsTable.Quests then
+		for _, questId in ipairs( RewardsTable.Quests ) do
+			SystemsContainer.QuestsService:GiveQuestOfId( LocalPlayer, questId )
+		end
+	end
 
-	--[[if LootTable.Skills then
-	end]]
+	--[[if RewardsTable.Dialogue then
 
-	--[[if LootTable.Quests then
 	end]]
 end
 
 function Module:RewardEnemyLootToPlayer( LocalPlayer, EnemyLootId )
-	warn(LocalPlayer.Name, EnemyLootId)
-
 	local EnemyLootTable = LootTablesModule:GetEnemyLootById( EnemyLootId )
-	-- TODO: edit chances (luck bonuses, make sure to deep copy table first)
-	local Rewards = LootTablesModule:ResolveEnemyLootTableGeneric( EnemyLootTable )
+	local Rewards = LootTablesModule:ResolveLootTableGeneric( EnemyLootTable )
 	Module:GiveRewardTableToPlayer( LocalPlayer, Rewards )
 end
 

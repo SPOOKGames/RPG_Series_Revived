@@ -79,6 +79,21 @@ function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 	print( profile.Data.Inventory )
 end
 
+function Module:RemoveItemOfUUID( LocalPlayer, ItemUUID )
+	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	if not profile then
+		return
+	end
+
+	local ItemId = Module:FindItemIdGivenUUID( LocalPlayer, ItemUUID )
+	if not ItemId then
+		return
+	end
+
+	UUIDToItemIdCache[ LocalPlayer ][ ItemUUID ] = nil
+	profile.Data.Inventory[ ItemId ][ ItemUUID ] = nil
+end
+
 function Module:FindItemIdGivenUUID( LocalPlayer, ItemUUID )
 	return UUIDToItemIdCache[ LocalPlayer ][ ItemUUID ]
 end

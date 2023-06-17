@@ -1,5 +1,16 @@
 
-local CurrencyData = require(script.Parent.Currency)
+local CurrencyConfigModule = require(script.Parent.Currency)
+
+local function SetProperties( Parent, Properties )
+	for propName, propValue in pairs( Properties ) do
+		Parent[propName] = propValue
+	end
+end
+
+local function ResolveRNGRange( Value, RNG )
+	RNG = RNG or Random.new()
+	return typeof(Value) == "table" and RNG:NextInteger(unpack(Value)) or Value
+end
 
 -- // Module // --
 local Module = {}
@@ -21,18 +32,23 @@ Module.EnemyLootTables = {
 	Generic_TestDummyTable = {
 
 		Currency = {
-			CurrencyData:ToCopperCoins({Copper = 2}),
-			CurrencyData:ToCopperCoins({Silver = 1})
+			CurrencyConfigModule:ToCopperCoins({Copper = 2}),
+			CurrencyConfigModule:ToCopperCoins({Silver = 1})
 		},
 
 		Experience = { 3, 7 },
 
-		Items = { --, Properties = { Enchantments = { }, } },
-			Module.PresetLootPools.CommonRedPotion,
-		},
+		Items = { },
+		WeightedItems = Module.PresetLootPools.CommonRedPotion,
+
 		Attributes = false,
+		WeightedAttributes = false,
+
 		Skills = false,
+		WeightedSkills = false,
+
 		Quests = false,
+		WeightedQuests = false,
 	},
 }
 
@@ -70,39 +86,66 @@ function Module:ResolvePoolWeightedMatrix( PresetPool, TotalWeight )
 	return PresetPool[1] -- backup, return first value
 end
 
-function Module:ResolveEnemyLootTableGeneric( LootTable )
+function Module:ResolveLootTableGeneric( LootTable )
+	local RNG = Random.new()
 
-	local LootRewards = {}
+	local LootRewards = {
+		Currency = ResolveRNGRange( LootTable.Currency, RNG ),
+		Experience = ResolveRNGRange( LootTable.Experience, RNG ),
 
-	if LootTable.Currency then
-		LootRewards.Currency = Random.new():NextInteger( unpack(LootTable.Currency) )
-	end
-
-	if LootTable.Experience then
-		LootRewards.Experience = Random.new():NextInteger( unpack(LootTable.Experience) )
-	end
+		Items = { },
+		Attributes = { },
+		Skills = { },
+		Quests = { },
+		Dialogue = { },
+	}
 
 	if LootTable.Items then
-		warn('LootTable - ITEMS loot not implemented')
-		-- TODO: random items
-		--[[
-			Items = { Module.PresetLootPools.CommonRedPotion, },
-		]]
+		SetProperties( LootRewards.Items, LootTable.Items )
+	end
+
+	-- weighted items
+	local ItemId = LootTable.WeightedItems and Module:ResolvePoolWeightedMatrix( LootTable.WeightedItems, false )
+	if ItemId then
+		local Amount = ItemId and LootTable.WeightedItems[ItemId].Quantity
+		Amount = Amount and ResolveRNGRange(Amount, RNG) or 1
+		if LootRewards.Items[ ItemId ] then
+			LootRewards.Items[ ItemId ] += Amount
+		else
+			LootRewards.Items[ ItemId ] = Amount
+		end
 	end
 
 	if LootTable.Attributes then
-		-- TODO: random items
-		warn('LootTable - ATTRIBUTES loot not implemented')
+		SetProperties( LootRewards.Attributes, LootTable.Attributes )
+	end
+	if LootTable.WeightedAttributes then
+		-- TODO:
+		warn('LootTable - WEIGHTED ATTRIBUTES loot not implemented')
 	end
 
 	if LootTable.Skills then
-		-- TODO: random items
-		warn('LootTable - SKILLS loot not implemented')
+		SetProperties( LootRewards.Skills, LootTable.Skills )
+	end
+	if LootTable.WeightedSkills then
+		-- TODO:
+		warn('LootTable - WEIGHTED SKILLS loot not implemented')
 	end
 
 	if LootTable.Quests then
-		-- TODO: random items
-		warn('LootTable - QUESTS loot not implemented')
+		SetProperties( LootRewards.Quests, LootTable.Quests )
+	end
+	if LootTable.WeightedQuests then
+		-- TODO:
+		warn('LootTable - WEIGHTED QUESTS loot not implemented')
+	end
+
+	if LootTable.Dialogue then
+		SetProperties( LootRewards.Dialogue, LootTable.Dialogue )
+	end
+	if LootTable.WeightedDialogue then
+		-- TODO:
+		warn('LootTable - WEIGHTED DIALOGUE loot not implemented')
 	end
 
 	return LootRewards

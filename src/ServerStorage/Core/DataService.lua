@@ -27,7 +27,7 @@ local TemplateData = {
 local SystemsContainer = {}
 
 -- // Module // --
-local Module = {}
+local Module = { TemplateData = TemplateData }
 
 -- Get the player's profile (optional Yield until present)
 function Module:GetProfileFromPlayer(LocalPlayer, Yield)
@@ -43,11 +43,11 @@ function Module:_LoadDataFromUserId( UserId )
 		while Loading[ UserId ] do
 			task.wait(0.1)
 		end
-		return ProfileCache[ UserId ]
+		return ProfileCache[ UserId ], true
 	end
 
 	if ProfileCache[UserId] then
-		return ProfileCache[UserId]
+		return ProfileCache[UserId], true
 	end
 
 	Loading[ UserId ] = true
@@ -62,13 +62,13 @@ function Module:_LoadDataFromUserId( UserId )
 	end
 
 	Loading[ UserId ] = nil
-	return LoadedProfile
+	return LoadedProfile, false
 end
 
 -- Load the given player's data profile
 function Module:_LoadDataFromPlayer( LocalPlayer )
 	local UserId = LocalPlayer.UserId
-	local Profile = Module:_LoadDataFromUserId( UserId )
+	local Profile, wasCached = Module:_LoadDataFromUserId( UserId )
 
 	if not Profile then
 		LocalPlayer:Kick('Failed to load your profile data.')
@@ -99,7 +99,7 @@ function Module:_LoadDataFromPlayer( LocalPlayer )
 	end
 
 	ProfileCache[LocalPlayer.UserId] = Profile
-	return Profile
+	return Profile, wasCached
 end
 
 -- Release the data profile for this given userId
@@ -115,6 +115,13 @@ end
 -- Release the given player's data profile
 function Module:ReleasePlayer( LocalPlayer )
 	return Module:ReleaseUserId( LocalPlayer.UserId )
+end
+
+-- Delete a player's data
+function Module:DeleteUserId( UserId )
+	if GameProfileStore then
+		GameProfileStore:RemoveAsync( tostring(UserId) )
+	end
 end
 
 function Module:Start()
