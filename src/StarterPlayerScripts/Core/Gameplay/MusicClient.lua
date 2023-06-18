@@ -1,6 +1,6 @@
 local TweenService = game:GetService('TweenService')
 
-local MusicData = require(script.Parent.Parent.Modules.Data.MusicData)
+local MusicData = require(script.Parent.Parent.Parent.Modules.Data.MusicData)
 
 local SystemsContainer = {}
 

@@ -1,6 +1,7 @@
 
 local Maid = {}
 Maid.__index = Maid
+Maid.ClassName = "Maid"
 
 function Maid.New(...)
 	return setmetatable({_tasks = {...}}, Maid)
@@ -18,6 +19,8 @@ function Maid:Cleanup()
 			end)
 		elseif typeof(_task) == 'table' and _task.Destroy then
 			task.defer(_task.Destroy)
+		elseif typeof(_task) == "table" and _task.ClassName == Maid.ClassName then
+			_task:Cleanup()
 		else
 			warn('Invalid task type; ', typeof(_task), _task)
 		end

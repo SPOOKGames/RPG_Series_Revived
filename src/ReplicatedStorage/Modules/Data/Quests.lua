@@ -1,4 +1,4 @@
-local LootTablesConfigModule = require(script.Parent.LootTables)
+--local LootTablesConfigModule = require(script.Parent.LootTables)
 local TableUtility = require(script.Parent.Parent.Utility.Table)
 
 local function CreateBaseDisplay( TitleText, Description, IconData )
@@ -52,21 +52,6 @@ Module.Quests = {
 			Repeatable = false,
 			MinimumLevel = 3,
 		},
-
-		--[==[
-			Requirements = function(playerData)
-				if Module:CountActiveQuestId( "TrainerMockBattle", playerData ) > 0 then
-					return false, {"Woah there buckaroo!", "You've already started this quest!"}
-				end
-				if Module:CountCompletedQuestId( "TrainerMockBattle", playerData ) ~= 0 then
-					return false, {"Woah there buckaroo!", "You've already completed this quest once. Can't do it again, nuh-uh."}
-				end
-				--[[if playerData.Level < 3 then
-					return false, {"Woah there buckaroo!", "You need to be at least level 3 for this quest! Come back when you are."}
-				end]]
-				return true
-			end,
-		]==]
 
 		-- sub-quests
 		SubQuests = {
@@ -255,13 +240,6 @@ function Module:CanAcquireQuestOfId( questId, playerData )
 	end
 
 	return true
-
-	--[==[
-		if not questConfig.Requirements then
-			return true
-		end
-		return questConfig.Requirements( playerData )
-	]==]
 end
 
 function Module:IsArrayTypeContrib( contributionId )

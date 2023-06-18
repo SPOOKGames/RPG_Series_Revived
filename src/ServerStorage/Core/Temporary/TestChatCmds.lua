@@ -3,6 +3,7 @@ local Players = game:GetService('Players')
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
+local ReplicatedCore = require(ReplicatedStorage:WaitForChild('Core'))
 
 local RemoteService = ReplicatedModules.Services.RemoteService
 local ChatMessageEvent = RemoteService:GetRemote('MakeChatMessage', 'RemoteEvent', false)
@@ -67,6 +68,14 @@ function Module:ParseChatCmd( LocalPlayer, commandName, ... )
 	-- LOOT TABLES
 	if commandName == "loot_table_enemy_reward" then
 		return SystemsContainer.LootTableService:RewardEnemyLootToPlayer( LocalPlayer, unpack(Args) )
+	end
+
+	-- DIALOGUE
+	-- ;;start_dialogue TestDialogue1
+	if commandName == "start_dialogue" then
+		return SystemsContainer.DialogueService:StartDialogue( LocalPlayer, unpack(Args) )
+	elseif commandName == "close_dialogue" then
+		return SystemsContainer.DialogueService:CloseDialogue( LocalPlayer )
 	end
 
 	return false, "NO SUCH COMMAND"
