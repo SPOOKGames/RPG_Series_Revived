@@ -4,3 +4,6 @@ require(ReplicatedStorage:WaitForChild('Core'))
 local ServerStorage = game:GetService('ServerStorage')
 require(ServerStorage:WaitForChild('Modules'))
 require(ServerStorage:WaitForChild('Core'))
+
+local Data = require(ReplicatedStorage:WaitForChild('Framework'))
+Data.Start()

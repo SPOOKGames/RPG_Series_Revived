@@ -49,8 +49,34 @@ function DialogueBuilder:SingleAction( action, delayPeriod )
 	return DialogueBuilder:MultipleActions( {action}, delayPeriod )
 end
 
+function DialogueBuilder:ConditionalCheck( conditionFunction, ifTrue, ifFalse )
+	return { Type = "Conditional", Condition = conditionFunction, True = ifTrue, False = ifFalse }
+end
+
 function DialogueBuilder:ExitDialogue()
 	return { Type = "Exit" }
+end
+
+function DialogueBuilder:BuildExitButton()
+	return {
+		Display = BuildOptionDisplayData('Exit'),
+		Options = DialogueBuilder:ExitDialogue(),
+	}
+end
+
+function DialogueBuilder:DisplayTextContent( titleText, descriptionText, after )
+	return DialogueBuilder:MultiOption(
+		BuildDialogueDisplay(
+			BuildDialogueTextData(titleText, false, descriptionText, false),
+			"rbxassetid://-1",
+			false,
+			false
+		),
+		{
+			Display = BuildOptionDisplayData('...'),
+			Options = after,
+		}
+	)
 end
 
 -- // Module // --
@@ -72,18 +98,63 @@ Module.Dialogue = {
 	TestDialogue1 = {
 		Tree = DialogueBuilder:YesNoOption(
 			BuildDialogueDisplay(
-				BuildDialogueTextData( "YesNo1", false, "Yes-No 101", false ),
+				BuildDialogueTextData("Yes-No", false, "Yes for action, no to close", false),
 				"rbxassetid://-1",
 				false,
 				false
 			),
-			DialogueBuilder:SingleAction(
-				"dialogue1_action1",
-				0
+			DialogueBuilder:SingleAction( "dialogue1_action1", 0 ),
+			DialogueBuilder:ExitDialogue()
+		),
+	},
+
+	TestDialogue2 = {
+		Tree = DialogueBuilder:ConditionalCheck(
+			function(LocalPlayer, PlayerData, dialogueId)
+				return table.find( PlayerData.CompletedQuests, dialogueId)
+			end,
+			DialogueBuilder:DisplayTextContent(
+				'Billy',
+				'You have already completed my tasks!',
+				DialogueBuilder:ExitDialogue()
 			),
-			DialogueBuilder:SingleAction(
-				"dialogue1_action2",
-				0
+			DialogueBuilder:ConditionalCheck(
+				function(LocalPlayer, PlayerData, dialogueId)
+					return PlayerData.Quests[ dialogueId ]
+				end,
+				DialogueBuilder:DisplayTextContent(
+					BuildDialogueDisplay(
+						BuildDialogueTextData( "Billy", false, "Ya haven't completed the tasks yet.", false ),
+						"rbxassetid://-1",
+						false,
+						false
+					),
+					DialogueBuilder:BuildExitButton()
+				), -- they are currently busy with the quest
+				DialogueBuilder:YesNoOption(
+					BuildDialogueDisplay(
+						BuildDialogueTextData( "Billy", false, "Start the level 3 quest?", false ),
+						"rbxassetid://-1",
+						false,
+						false
+					),
+					DialogueBuilder:ConditionalCheck(
+						function(LocalPlayer, PlayerData)
+							return PlayerData and PlayerData.Level >= 3
+						end,
+						DialogueBuilder:SingleAction( "start_billy_quest", 0 ),
+						DialogueBuilder:MultiOption(
+							BuildDialogueDisplay(
+								BuildDialogueTextData( "Billy", false, "You must be level 3 at minimum.", false ),
+								"rbxassetid://-1",
+								false,
+								false
+							),
+							DialogueBuilder:BuildExitButton()
+						)
+					),
+					DialogueBuilder:ExitDialogue()
+				) -- they have not started the quest
 			)
 		),
 	},

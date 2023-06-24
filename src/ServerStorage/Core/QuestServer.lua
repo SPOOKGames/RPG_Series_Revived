@@ -16,7 +16,7 @@ function Module:CreateBaseQuest()
 end
 
 function Module:GiveQuestOfId( LocalPlayer, questId )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end
@@ -44,7 +44,7 @@ function Module:GiveQuestOfId( LocalPlayer, questId )
 end
 
 function Module:RemoveQuestOfUUID( LocalPlayer, questUUID )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end
@@ -62,14 +62,14 @@ function Module:RewardQuestOfId( LocalPlayer, questId )
 		error('Could not find quest of id: '..tostring(questId))
 	end
 
-	SystemsContainer.LootTableService:GiveRewardTableToPlayer(
+	SystemsContainer.LootTableServer:GiveRewardTableToPlayer(
 		LocalPlayer,
 		questConfig.Rewards
 	)
 end
 
 function Module:IncrementSubQuestFromQuestUUID( LocalPlayer, questUUID, ignoreUpdate )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end
@@ -89,7 +89,7 @@ function Module:IncrementSubQuestFromQuestUUID( LocalPlayer, questUUID, ignoreUp
 end
 
 function Module:CheckPlayerQuestStates( LocalPlayer )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end
@@ -152,7 +152,7 @@ end
 
 function Module:AppendQuestContributions( LocalPlayer, contributionType, contributionId, amount )
 	amount = amount or 1
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end
@@ -163,12 +163,10 @@ function Module:AppendQuestContributions( LocalPlayer, contributionType, contrib
 			warn('Could not find quest of id: '..tostring(questId))
 			continue
 		end
-
 		for _, questData in pairs( uuidCache ) do
 			if not QuestsConfigModule:IsValidSubQuestContribution( questId, questData.SubQuestIndex, contributionType, contributionId ) then
 				continue
 			end
-
 			if QuestsConfigModule:IsArrayTypeContrib( contributionType ) then
 				table.insert( questData.Contributions, contributionId )
 			else

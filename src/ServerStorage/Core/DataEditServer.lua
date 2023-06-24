@@ -11,25 +11,25 @@ local Module = {}
 
 -- Give the target player an amount of experience points
 function Module:GiveExperienceToPlayer( LocalPlayer, Experience )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer(LocalPlayer)
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer(LocalPlayer)
 	if not playerProfile then
 		return
 	end
 	playerProfile.Data.Experience += Experience
-	SystemsContainer.LevelingService:CheckPlayerLeveling( LocalPlayer )
+	SystemsContainer.LevelingServer:CheckPlayerLeveling( LocalPlayer )
 end
 
 -- Give the target player an amount of copper coins.
 function Module:GiveCurrencyToPlayer( LocalPlayer, IncrementCopper )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer(LocalPlayer)
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer(LocalPlayer)
 	if not playerProfile then
 		return
 	end
 
-	local CurrentCopper = SystemsContainer.CurrencyService:CurrencyDictToCopper( playerProfile.Data.Currency )
+	local CurrentCopper = SystemsContainer.CurrencyServer:CurrencyDictToCopper( playerProfile.Data.Currency )
 	CurrentCopper += IncrementCopper
 
-	local currencyDict = SystemsContainer.CurrencyService:CopperToCurrencyDict( CurrentCopper )
+	local currencyDict = SystemsContainer.CurrencyServer:CopperToCurrencyDict( CurrentCopper )
 	for currencyName, currencyValue in pairs(currencyDict) do
 		playerProfile.Data.Currency[currencyName] = currencyValue
 	end
@@ -37,12 +37,12 @@ end
 
 -- Wipe a player's data
 function Module:WipeUserId( UserId )
-	local Profile, wasLoaded = SystemsContainer.DataService:_LoadDataFromUserId( UserId )
+	local Profile, wasLoaded = SystemsContainer.DataServer:_LoadDataFromUserId( UserId )
 	if not Profile then
 		return
 	end
 
-	for propName, propValue in pairs( TableUtility:DeepCopy( SystemsContainer.DataService.TemplateData ) ) do
+	for propName, propValue in pairs( TableUtility:DeepCopy( SystemsContainer.DataServer.TemplateData ) ) do
 		Profile.Data[ propName ] = propValue
 	end
 

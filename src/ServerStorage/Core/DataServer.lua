@@ -83,10 +83,10 @@ function Module:_LoadDataFromPlayer( LocalPlayer )
 	end)
 
 	if LocalPlayer:IsDescendantOf(Players) then
-		local IsBanned = SystemsContainer.BanService:CheckProfileBanExpired(LocalPlayer.UserId, Profile)
+		local IsBanned = SystemsContainer.BanServer:CheckProfileBanExpired(LocalPlayer.UserId, Profile)
 		if IsBanned then
 			Profile:Release()
-			local BanMessage = SystemsContainer.BanService:CompileBanMessage(Profile.Data.Banned)
+			local BanMessage = SystemsContainer.BanServer:CompileBanMessage(Profile.Data.Banned)
 			if LocalPlayer:IsDescendantOf(Players) then
 				LocalPlayer:Kick(BanMessage)
 			end

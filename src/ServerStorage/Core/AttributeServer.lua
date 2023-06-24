@@ -21,7 +21,7 @@ function Module:GiveAttributeToPlayer( LocalPlayer, attributeId )
 		return
 	end
 
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -37,13 +37,13 @@ end
 
 -- Get the given attribute's level for the player (otherwise is 0)
 function Module:GetPlayerAttributeLevel( LocalPlayer, attributeId )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	return profile and profile.Data.Attributes[ attributeId ] or 0
 end
 
 -- Check if an attribute can level up
 function Module:CheckAttributeLeveling( LocalPlayer, attributeId )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -73,7 +73,7 @@ end
 
 -- Increment an attribute's experience points
 function Module:IncrementAttributeExperience( LocalPlayer, attributeId, experienceAmount )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if profile.Data.Attributes[ attributeId ] then
 		profile.Data.Attributes[ attributeId ].Experience += experienceAmount
 		Module:CheckAttributeLeveling( LocalPlayer, attributeId )
@@ -82,7 +82,7 @@ end
 
 -- Remove attribute from player
 function Module:RemoveAttributeFromPlayer( LocalPlayer, attributeId )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if profile then
 		profile.Data.Attributes[ attributeId ] = nil
 	end

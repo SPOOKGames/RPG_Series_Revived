@@ -26,7 +26,7 @@ function Module:SetupSimpleNPC(Model)
 		CombatTagService:ClearHumanoidCombatTags( Humanoid )
 		for LocalPlayer, Data in pairs(DamageData) do
 			if Data.Damage > Humanoid.MaxHealth * (3/100) then -- minimum 3% of health damage to receive reward
-				SystemsContainer.LootTableService:RewardEnemyLootToPlayer( LocalPlayer, LOOT_TABLE_ID )
+				SystemsContainer.LootTableServer:RewardEnemyLootToPlayer( LocalPlayer, LOOT_TABLE_ID )
 			end
 		end
 

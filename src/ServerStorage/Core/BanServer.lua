@@ -59,7 +59,7 @@ function Module:BanUserId( UserId, BanProperties )
 		MessagingService:PublishAsync('BanServiceNotif', { UserId, BanProperties.Reason })
 	end)
 
-	local Profile = SystemsContainer.DataService:_LoadDataFromUserId(UserId)
+	local Profile = SystemsContainer.DataServer:_LoadDataFromUserId(UserId)
 	if Profile then
 		BanProperties = Module:ConcileBanProperties(BanProperties)
 		Profile.Data.Banned = BanProperties

@@ -6,6 +6,10 @@ local SystemsContainer = {}
 -- // Module // --
 local Module = {}
 
+function Module:GetWidget( widgetName )
+	return WidgetsCache[ widgetName ]
+end
+
 function Module:ToggleWidget(widgetName, enabled)
 	local cachedModule = WidgetsCache[widgetName]
 	if not cachedModule then

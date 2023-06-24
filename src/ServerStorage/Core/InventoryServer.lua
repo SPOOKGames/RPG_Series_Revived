@@ -22,7 +22,7 @@ end
 
 -- Generate the UUID to ItemId cache
 function Module:GenerateUUIDToItemId( LocalPlayer )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -44,7 +44,7 @@ function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 		return
 	end
 
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -80,7 +80,7 @@ function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 end
 
 function Module:RemoveItemOfUUID( LocalPlayer, ItemUUID )
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not profile then
 		return
 	end
@@ -101,7 +101,7 @@ end
 function Module:OnPlayerAdded( LocalPlayer )
 	UUIDToItemIdCache[ LocalPlayer ] = { }
 
-	local profile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer, true )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer, true )
 	if not profile then
 		return
 	end

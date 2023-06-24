@@ -26,7 +26,7 @@ end
 
 -- Assort the given player coins
 function Module:AssortPlayerCoins( LocalPlayer )
-	local playerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not playerProfile then
 		return
 	end

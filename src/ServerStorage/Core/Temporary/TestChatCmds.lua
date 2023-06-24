@@ -3,7 +3,6 @@ local Players = game:GetService('Players')
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
-local ReplicatedCore = require(ReplicatedStorage:WaitForChild('Core'))
 
 local RemoteService = ReplicatedModules.Services.RemoteService
 local ChatMessageEvent = RemoteService:GetRemote('MakeChatMessage', 'RemoteEvent', false)
@@ -23,40 +22,40 @@ function Module:ParseChatCmd( LocalPlayer, commandName, ... )
 
 	-- DEBUG
 	if commandName == "clear_data" then
-		return SystemsContainer.DataEditService:WipeUserId( LocalPlayer.UserId )
+		return SystemsContainer.DataEditServer:WipeUserId( LocalPlayer.UserId )
 	elseif commandName == "output_data" then
-		return SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer ).Data
+		return SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer ).Data
 	end
 
 	-- QUESTS
 	-- ;;quest_start_id TrainerMockBattle
 	if commandName == "quest_start_id" then
-		return SystemsContainer.QuestService:GiveQuestOfId( LocalPlayer, unpack(Args) )
+		return SystemsContainer.QuestServer:GiveQuestOfId( LocalPlayer, unpack(Args) )
 	elseif commandName == "quest_remove_uuid" then
-		return SystemsContainer.QuestService:RemoveQuestOfUUID( LocalPlayer, unpack(Args) )
+		return SystemsContainer.QuestServer:RemoveQuestOfUUID( LocalPlayer, unpack(Args) )
 	elseif commandName == "quest_reward_id" then
-		return SystemsContainer.QuestService:RewardQuestOfId( LocalPlayer, unpack(Args) )
+		return SystemsContainer.QuestServer:RewardQuestOfId( LocalPlayer, unpack(Args) )
 	elseif commandName == "quest_append_contrib" then
-		return SystemsContainer.QuestService:AppendQuestContributions( LocalPlayer, unpack(Args) )
+		return SystemsContainer.QuestServer:AppendQuestContributions( LocalPlayer, unpack(Args) )
 	elseif commandName == "quest_increment_subquest" then
-		return SystemsContainer.QuestService:IncrementSubQuestFromQuestUUID( LocalPlayer, unpack(Args) )
+		return SystemsContainer.QuestServer:IncrementSubQuestFromQuestUUID( LocalPlayer, unpack(Args) )
 	end
 
 	-- ITEMS
 	if commandName == "item_give_id" then
-		return SystemsContainer.InventoryService:GiveQuantityOfItemIdToPlayer( LocalPlayer, Args[1], tonumber(Args[2]) )
+		return SystemsContainer.InventoryServer:GiveQuantityOfItemIdToPlayer( LocalPlayer, Args[1], tonumber(Args[2]) )
 	elseif commandName == "item_remove_uuid" then
-		return SystemsContainer.InventoryService:RemoveItemOfUUID(LocalPlayer, unpack(Args))
+		return SystemsContainer.InventoryServer:RemoveItemOfUUID(LocalPlayer, unpack(Args))
 	end
 
 	-- CURRENCY
 	if commandName == "currency_copper" then
-		return SystemsContainer.DataEditService:GiveCurrencyToPlayer( LocalPlayer, tonumber(Args[1]) )
+		return SystemsContainer.DataEditServer:GiveCurrencyToPlayer( LocalPlayer, tonumber(Args[1]) )
 	end
 
 	-- LEVEL & EXPERIENCE
 	if commandName == "exp_give" then
-		return SystemsContainer.DataEditService:GiveExperienceToPlayer( LocalPlayer, tonumber(Args[1]) )
+		return SystemsContainer.DataEditServer:GiveExperienceToPlayer( LocalPlayer, tonumber(Args[1]) )
 	--[[elseif commandName == "exp_remove" then
 		-- TODO:
 	elseif commandName == "level_give" then
@@ -67,15 +66,15 @@ function Module:ParseChatCmd( LocalPlayer, commandName, ... )
 
 	-- LOOT TABLES
 	if commandName == "loot_table_enemy_reward" then
-		return SystemsContainer.LootTableService:RewardEnemyLootToPlayer( LocalPlayer, unpack(Args) )
+		return SystemsContainer.LootTableServer:RewardEnemyLootToPlayer( LocalPlayer, unpack(Args) )
 	end
 
 	-- DIALOGUE
 	-- ;;start_dialogue TestDialogue1
 	if commandName == "start_dialogue" then
-		return SystemsContainer.DialogueService:StartDialogue( LocalPlayer, unpack(Args) )
+		return SystemsContainer.DialogueServer:StartDialogue( LocalPlayer, unpack(Args) )
 	elseif commandName == "close_dialogue" then
-		return SystemsContainer.DialogueService:CloseDialogue( LocalPlayer )
+		return SystemsContainer.DialogueServer:CloseDialogue( LocalPlayer )
 	end
 
 	return false, "NO SUCH COMMAND"

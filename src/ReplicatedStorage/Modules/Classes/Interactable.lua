@@ -1,28 +1,24 @@
-local EventClass = require(script.Parent.Parent.Parent.Classes.Event)
-local MaidClass = require(script.Parent.Parent.Parent.Classes.Maid)
+local EventClass = require(script.Parent.Event)
+local MaidClass = require(script.Parent.Maid)
 
 -- // Class // --
 local Class = {}
 Class.__index = Class
 
-function Class.New( TargetInstance, CanUseInteractionCallbacks )
-	if typeof(CanUseInteractionCallbacks) == "function" then
-		CanUseInteractionCallbacks = { CanUseInteractionCallbacks }
-	end
-
+function Class.New( TargetInstance )
 	local StartedEvent = EventClass.New()
 	local CanceledEvent = EventClass.New()
 	local CompletedEvent = EventClass.New()
 	return setmetatable({
+		Enabled = true,
 		TargetInstance = TargetInstance,
 		Destroyed = nil,
 
 		Keybinds = { Enum.KeyCode.F, Enum.KeyCode.ButtonB },
-		Duration = 3,
-		--MaxDistance = 30,
+		HoldDuration = 1,
+		MaxDistance = 14,
 
-		Enabled = true,
-		CanUseInteraction = CanUseInteractionCallbacks or false,
+		CanUseInteraction = false,
 
 		_Maid = MaidClass.New(StartedEvent, CanceledEvent, CompletedEvent),
 		Events = {
@@ -31,6 +27,21 @@ function Class.New( TargetInstance, CanUseInteractionCallbacks )
 			Completed = CompletedEvent,
 		},
 	}, Class)
+end
+
+function Class:AddConditionFunction(...)
+	if not self.CanUseInteraction then
+		self.CanUseInteraction = { }
+	end
+	for _, func in ipairs( { ... } ) do
+		if not table.find(self.CanUseInteraction, func) then
+			table.insert(self.CanUseInteraction, func)
+		end
+	end
+end
+
+function Class:SetEnabled( enabled )
+	self.Enabled = enabled
 end
 
 function Class:SetKeybinds( ... )

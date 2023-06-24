@@ -46,7 +46,109 @@ Module.DictTypes = {
 ]]
 Module.Quests = {
 
-	TrainerMockBattle = {
+	TestQuestLine1 = {
+		-- requirements to acquire this quest
+		Requirements = {
+			Repeatable = false,
+			MinimumLevel = 1,
+		},
+
+		-- sub-quests
+		SubQuests = {
+			CreateSubQuestData(
+				{
+					[Module.ArrayContributions.Interact] = { 'Interact1' }
+				},
+				CreateBaseDisplay(
+					'Interact with block number 1!',
+					'',
+					'rbxassetid://-1'
+				)
+			),
+			CreateSubQuestData(
+				{
+					[Module.ArrayContributions.Talk] = { 'Interact2' }
+				},
+				CreateBaseDisplay(
+					'Talk to the Interact2 NPC!',
+					'',
+					'rbxassetid://-1'
+				)
+			),
+			CreateSubQuestData(
+				{
+					[Module.ArrayContributions.Interact] = { 'FinishQuest' }
+				},
+				CreateBaseDisplay(
+					'Interact with the finish quest block!',
+					'',
+					'rbxassetid://-1'
+				)
+			),
+		},
+
+		-- automatically start the(se) quest(s) after this one completes.
+		Continuation = {'TestQuestLine2'},
+
+		-- the rewards from the quest upon completion
+		Rewards = {
+			Currency = 5,
+			Experience = 20,
+
+			Items = { RedPotion = 5, WoodenSword = 1 },
+			Skills = { 'Roll' },
+		},
+
+		-- ui display information
+		Display = CreateBaseDisplay(
+			'Test Quest Line 1',
+			'Complete the longer questline for a simple reward!',
+			'rbxassetid://-1'
+		),
+	},
+
+	TestQuestLine2 = {
+		-- requirements to acquire this quest
+		Requirements = {
+			Repeatable = false,
+			MinimumLevel = 1,
+		},
+
+		-- sub-quests
+		SubQuests = {
+			CreateSubQuestData(
+				{
+					[Module.ArrayContributions.Talk] = { 'Interact4' }
+				},
+				CreateBaseDisplay(
+					'Talk to the Interact4 NPC!',
+					'',
+					'rbxassetid://-1'
+				)
+			)
+		},
+
+		-- automatically start the(se) quest(s) after this one completes.
+		Continuation = { },
+
+		-- the rewards from the quest upon completion
+		Rewards = {
+			Currency = 5,
+			Experience = 0,
+
+			Items = { RedPotion = 5 },
+			Skills = { },
+		},
+
+		-- ui display information
+		Display = CreateBaseDisplay(
+			'Test Quest Line 2',
+			'Complete the short questline for a simple reward!',
+			'rbxassetid://-1'
+		),
+	},
+
+	--[[TrainerMockBattle = {
 		-- requirements to acquire this quest
 		Requirements = {
 			Repeatable = false,
@@ -115,7 +217,8 @@ Module.Quests = {
 			'Defeat the mock battle trainer in the training grounds.',
 			'rbxassetid://-1'
 		),
-	},
+	},]]
+
 }
 
 function Module:GetConfigFromId( questId )
@@ -149,7 +252,7 @@ function Module:IsValidSubQuestContribution( questId, subQuestIndex, contributio
 		return false
 	end
 
-	return categoryDict[contributionId] ~= nil
+	return table.find( categoryDict, contributionId ) or categoryDict[contributionId]
 end
 
 function Module:IsSubQuestCompletedFromUUID( questUUID, playerData )
@@ -224,18 +327,16 @@ function Module:CanAcquireQuestOfId( questId, playerData )
 		return false
 	end
 
-	if not questConfig.Requirements.Repeatable then
-		if Module:CountActiveQuestId( "TrainerMockBattle", playerData ) > 0 then
-			return false, {"Woah there buckaroo!", "You've already started this quest!"}
-		end
-		if Module:CountCompletedQuestId( "TrainerMockBattle", playerData ) ~= 0 then
-			return false, {"Woah there buckaroo!", "You've already completed this quest once. Can't do it again, nuh-uh."}
-		end
+	if Module:CountActiveQuestId(questId, playerData) > 0 then
+		return false, 'You are already doing this quest.'
 	end
 
-	if questConfig.Requirements.MinimumLevel then
-		if playerData.Level < questConfig.Requirements.MinimumLevel then
-			return false, {"Woah there buckaroo!", "You need to be at least level 3 for this quest! Come back when you are."}
+	if questConfig.Requirements then
+		if not questConfig.Requirements.Repeatable and Module:CountCompletedQuestId(questId, playerData) > 0 then
+			return false, 'You can only do this quest once.'
+		end
+		if questConfig.Requirements.MinimumLevel and playerData.Level < questConfig.Requirements.MinimumLevel then
+			return false, 'You must be level '..(questConfig.Requirements.MinimumLevel)..' to take this quest.'
 		end
 	end
 

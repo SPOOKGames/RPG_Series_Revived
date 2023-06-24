@@ -10,28 +10,28 @@ local SystemsContainer = {}
 local Module = {}
 
 function Module:GiveRewardTableToPlayer( LocalPlayer, RewardsTable )
-	local PlayerProfile = SystemsContainer.DataService:GetProfileFromPlayer( LocalPlayer )
+	local PlayerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	if not PlayerProfile then
 		return
 	end
 
 	if RewardsTable.Currency then
-		SystemsContainer.DataEditService:GiveCurrencyToPlayer( LocalPlayer, RewardsTable.Currency )
+		SystemsContainer.DataEditServer:GiveCurrencyToPlayer( LocalPlayer, RewardsTable.Currency )
 	end
 
 	if RewardsTable.Experience then
-		SystemsContainer.DataEditService:GiveExperienceToPlayer( LocalPlayer, RewardsTable.Experience )
+		SystemsContainer.DataEditServer:GiveExperienceToPlayer( LocalPlayer, RewardsTable.Experience )
 	end
 
 	if RewardsTable.Items then
 		for itemId, quantity in pairs( RewardsTable.Items ) do
-			SystemsContainer.InventoryService:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
+			SystemsContainer.InventoryServer:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 		end
 	end
 
 	if RewardsTable.Attributes then
 		for _, attributeId in ipairs( RewardsTable.Attributes ) do
-			SystemsContainer.AttributeService:GiveAttributeToPlayer( LocalPlayer, attributeId )
+			SystemsContainer.AttributeServer:GiveAttributeToPlayer( LocalPlayer, attributeId )
 		end
 	end
 

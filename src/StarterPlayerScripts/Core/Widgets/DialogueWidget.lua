@@ -3,13 +3,16 @@ local LocalPlayer = Players.LocalPlayer
 local LocalAssets = LocalPlayer:WaitForChild('PlayerScripts'):WaitForChild('Assets')
 local LocalModules = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("Modules"))
 
-local ReplicatedStorage = game:GetService('ReplicatedStorage')
-local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
-
 local Interface = LocalPlayer:WaitForChild('PlayerGui'):WaitForChild('Interface')
 local NPCDialogueFrame = Interface:WaitForChild('DialogueNPC')
 
 local UserInterfaceUtility = LocalModules.Utility.UserInterface
+
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local ReplicatedCore = require(ReplicatedStorage:WaitForChild('Core'))
+local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
+
+local ReplicatedData = ReplicatedCore.ReplicatedData
 
 local MaidClassModule = ReplicatedModules.Classes.Maid
 local DialogueConfigModule = ReplicatedModules.Data.Dialogue
@@ -104,6 +107,15 @@ function Module:ResolveNextDialogue( dialogueData )
 		end
 		Module:CloseDialogue()
 		return
+	elseif dialogueData.Type == "Conditional" then
+		local isValid = dialogueData.Condition(LocalPlayer, ReplicatedData:GetData('PlayerData', false), Module.ActiveDialogueId)
+		if isValid then
+			dialogueData = dialogueData.True
+		else
+			dialogueData = dialogueData.False
+		end
+		Module:ResolveNextDialogue( dialogueData )
+		return
 	end
 
 	Module.ActiveDialogueOptionData = dialogueData
@@ -112,6 +124,8 @@ function Module:ResolveNextDialogue( dialogueData )
 end
 
 function Module:StartDialogue( dialogueId )
+	print(dialogueId)
+
 	local dialogueConfig = DialogueConfigModule:GetDialogueFromId( dialogueId )
 	if not dialogueConfig then
 		warn('could not find dialogue of id - ' .. tostring(dialogueId))

@@ -14,7 +14,7 @@ local Module = {}
 function Module:OnPlayerAdded( LocalPlayer )
 	print('Loading', LocalPlayer.Name, "'s profile data.")
 
-	local playerProfile = SystemsContainer.DataService:_LoadDataFromPlayer( LocalPlayer )
+	local playerProfile = SystemsContainer.DataServer:_LoadDataFromPlayer( LocalPlayer )
 
 	ReplicatedData:SetData('PlayerData', playerProfile.Data, {LocalPlayer})
 
@@ -24,7 +24,7 @@ end
 -- When the player leaves the game, ...
 function Module:OnPlayerRemoving( LocalPlayer )
 	-- TODO: any last edits?
-	SystemsContainer.DataService:ReleasePlayer( LocalPlayer )
+	SystemsContainer.DataServer:ReleasePlayer( LocalPlayer )
 end
 
 function Module:Start()
