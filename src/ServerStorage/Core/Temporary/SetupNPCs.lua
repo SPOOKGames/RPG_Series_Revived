@@ -41,6 +41,13 @@ function Module:Start()
 		warn( LocalPlayer.Name )
 		SystemsContainer.QuestServer:GiveQuestOfId( LocalPlayer, 'TestQuestLine1' )
 	end)
+
+	local TDialogue1 = SystemsContainer.InteractionServer:CreateInteraction(
+		workspace.TDialogue1, false)
+		TDialogue1:OnInteractCompleted(function( LocalPlayer )
+		SystemsContainer.DialogueServer:StartDialogue( LocalPlayer, 'TestDialogue1' )
+	end)
+
 end
 
 function Module:Init(otherSystems)

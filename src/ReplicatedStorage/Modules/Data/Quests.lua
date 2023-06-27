@@ -27,7 +27,7 @@ Module.ArrayContributions = {
 	Talk = 4,
 }
 
-Module.DictTypes = {
+Module.DictContributions = {
 	-- dictionary, itemName = amount
 	Collect = 5,
 	-- dictionary, npcName = amount
@@ -67,10 +67,30 @@ Module.Quests = {
 			),
 			CreateSubQuestData(
 				{
+					[Module.DictContributions.Subjugate] = { Rig = 1 }
+				},
+				CreateBaseDisplay(
+					'Subjugate 1 Rig NPCs!',
+					'',
+					'rbxassetid://-1'
+				)
+			),
+			CreateSubQuestData(
+				{
 					[Module.ArrayContributions.Talk] = { 'Interact2' }
 				},
 				CreateBaseDisplay(
 					'Talk to the Interact2 NPC!',
+					'',
+					'rbxassetid://-1'
+				)
+			),
+			CreateSubQuestData(
+				{
+					[Module.ArrayContributions.Visit] = { 'RegionPart2' }
+				},
+				CreateBaseDisplay(
+					'Visit the region: "RegionPart2"!',
 					'',
 					'rbxassetid://-1'
 				)

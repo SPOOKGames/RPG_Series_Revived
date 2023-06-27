@@ -29,7 +29,7 @@ Module.PresetLootPools = {
 }
 
 Module.EnemyLootTables = {
-	Generic_TestDummyTable = {
+	Rig = {
 
 		Currency = {
 			CurrencyConfigModule:ToCopperCoins({Copper = 2}),
@@ -105,14 +105,14 @@ function Module:ResolveLootTableGeneric( LootTable )
 	end
 
 	-- weighted items
-	local ItemId = LootTable.WeightedItems and Module:ResolvePoolWeightedMatrix( LootTable.WeightedItems, false )
-	if ItemId then
-		local Amount = ItemId and LootTable.WeightedItems[ItemId].Quantity
+	local ItemData = LootTable.WeightedItems and Module:ResolvePoolWeightedMatrix( LootTable.WeightedItems, false )
+	if ItemData then
+		local Amount = ItemData.Quantity
 		Amount = Amount and ResolveRNGRange(Amount, RNG) or 1
-		if LootRewards.Items[ ItemId ] then
-			LootRewards.Items[ ItemId ] += Amount
+		if LootRewards.Items[ ItemData.ID ] then
+			LootRewards.Items[ ItemData.ID ] += Amount
 		else
-			LootRewards.Items[ ItemId ] = Amount
+			LootRewards.Items[ ItemData.ID ] = Amount
 		end
 	end
 

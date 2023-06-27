@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
 
-local AttributeConfig = ReplicatedModules.Attributes
+local AttributeConfig = ReplicatedModules.Data.Attributes
 
 local SystemsContainer = {}
 
@@ -39,6 +39,17 @@ end
 function Module:GetPlayerAttributeLevel( LocalPlayer, attributeId )
 	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
 	return profile and profile.Data.Attributes[ attributeId ] or 0
+end
+
+-- Get the attribute's resultant values from the current level
+function Module:GetPlayerAttributeLevelBonuses( LocalPlayer, attributeId )
+	local attributeConfig = AttributeConfig:GetConfigFromId( attributeId )
+	if not attributeConfig then
+		warn("cannot get attribute bonuses as id does not exist - " .. tostring(attributeId))
+		return
+	end
+	local currentLevel = Module:GetPlayerAttributeLevel( LocalPlayer, attributeId )
+	return attributeConfig.GetBonus(currentLevel)
 end
 
 -- Check if an attribute can level up

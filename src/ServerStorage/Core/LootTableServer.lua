@@ -52,6 +52,10 @@ end
 
 function Module:RewardEnemyLootToPlayer( LocalPlayer, EnemyLootId )
 	local EnemyLootTable = LootTablesModule:GetEnemyLootById( EnemyLootId )
+	if not EnemyLootTable then
+		warn("Could not find enemy loot table for given id - " .. tostring(EnemyLootId))
+		return
+	end
 	local Rewards = LootTablesModule:ResolveLootTableGeneric( EnemyLootTable )
 	Module:GiveRewardTableToPlayer( LocalPlayer, Rewards )
 end

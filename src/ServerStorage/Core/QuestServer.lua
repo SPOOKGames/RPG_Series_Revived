@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
 
 local QuestsConfigModule = ReplicatedModules.Data.Quests
+local RegionsService = ReplicatedModules.Services.RegionsService
 local TableUtility = ReplicatedModules.Utility.Table
 
 local SystemsContainer = {}
@@ -183,6 +184,10 @@ function Module:AppendQuestContributions( LocalPlayer, contributionType, contrib
 end
 
 function Module:Start()
+
+	RegionsService.RegionEnter:Connect(function( LocalPlayer, regionName )
+		Module:AppendQuestContributions( LocalPlayer, QuestsConfigModule.ArrayContributions.Visit, regionName, 1 )
+	end)
 
 end
 

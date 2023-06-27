@@ -53,10 +53,12 @@ function Module:CanUseInteractable( LocalPlayer, InteractableClass )
 	if not InteractableClass.Enabled then
 		return false, 'Interaction is not enabled.'
 	end
-	for _, conditionCallback in ipairs( InteractableClass.CanUseInteraction ) do
-		local CanUse, conditionMessage = conditionCallback(LocalPlayer)
-		if not CanUse then
-			return false, conditionMessage
+	if InteractableClass.CanUseInteraction then
+		for _, conditionCallback in ipairs( InteractableClass.CanUseInteraction ) do
+			local CanUse, conditionMessage = conditionCallback(LocalPlayer)
+			if not CanUse then
+				return false, conditionMessage
+			end
 		end
 	end
 	return true

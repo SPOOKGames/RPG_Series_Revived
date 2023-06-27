@@ -1,13 +1,20 @@
 local Players = game:GetService("Players")
 local LocalPlayer = nil
 
+local ServerStorage = game:GetService("ServerStorage")
+local ServerCore = require(ServerStorage:WaitForChild('Core'))
+local ServerModules = require(ServerStorage:WaitForChild("Modules"))
+
+local AttributeServer = ServerCore.AttributeServer
+
+local CombatTagService = ServerModules.Services.CombatTagService
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedCore = require(ReplicatedStorage:WaitForChild('Core'))
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
 
 local CombatCoreModule = ReplicatedCore.CombatCore
 
-local CombatTagService = ReplicatedModules.Services.CombatTagService
 local HitboxService = ReplicatedModules.Services.HitboxService
 local VisualizersModule = ReplicatedModules.Utility.Visualizers
 
@@ -42,12 +49,15 @@ Tool.Activated:Connect(function()
 
 	local doApplyKnockback = (CurrentCombo == #CombatConfig.ANIMATION_IDS)
 
+	local Damage = 30
+	Damage += AttributeServer:GetPlayerAttributeLevelBonuses(LocalPlayer, 'Strength')
+
 	local hitHumanoids = HitboxService:FindHumanoidsFromHits( hitParts )
 	for _, humanoid in ipairs( hitHumanoids ) do
 		if doApplyKnockback then
 			CombatCoreModule:Knockback( humanoid.Parent.PrimaryPart, Tool.Parent:GetPivot().Position )
 		end
-		CombatTagService:CombatDamageHumanoid( humanoid, 30, LocalPlayer )
+		CombatTagService:CombatDamageHumanoid( humanoid, Damage, LocalPlayer )
 	end
 
 	LastCombatTick = time()

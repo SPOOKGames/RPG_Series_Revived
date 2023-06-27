@@ -103,7 +103,7 @@ Module.Dialogue = {
 				false,
 				false
 			),
-			DialogueBuilder:SingleAction( "dialogue1_action1", 0 ),
+			DialogueBuilder:SingleAction( "START_QUEST:TestQuestLine2", 0 ),
 			DialogueBuilder:ExitDialogue()
 		),
 	},
