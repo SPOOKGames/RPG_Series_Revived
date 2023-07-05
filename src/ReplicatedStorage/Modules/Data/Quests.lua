@@ -36,6 +36,35 @@ Module.DictContributions = {
 	StatValues = 7,
 }
 
+Module.ContributionStringFormating = {
+	Default = function(a, b)
+		return tostring(a)..' - '..tostring(b)
+	end,
+
+	[Module.ArrayContributions.Defeat] = function(_, value)
+		return string.format("Defeat [%s]", tostring(value))
+	end,
+	[Module.ArrayContributions.Visit] = function(_, value)
+		return string.format("Visit [%s]", tostring(value))
+	end,
+	[Module.ArrayContributions.Interact] = function(_, value)
+		return string.format("Interact with [%s]", tostring(value))
+	end,
+	[Module.ArrayContributions.Talk] = function(_, value)
+		return string.format("Talk to [%s]", tostring(value))
+	end,
+
+	[Module.DictContributions.Collect] = function(id, value)
+		return string.format("Collect %s of [%s]", tostring(value), tostring(id))
+	end,
+	[Module.DictContributions.Subjugate] = function(id, value)
+		return string.format("Subjugate %s of [%s]", tostring(value), tostring(id))
+	end,
+	[Module.DictContributions.StatValues] = function(id, value)
+		return string.format("Increase the stat [%s] to %s", tostring(id), tostring(value))
+	end,
+}
+
 --[[
 	NOTES:
 	- npcs need to have the ability to spawn DURING and AFTER quests.
@@ -67,7 +96,8 @@ Module.Quests = {
 			),
 			CreateSubQuestData(
 				{
-					[Module.DictContributions.Subjugate] = { Rig = 1 }
+					[Module.DictContributions.Subjugate] = { Rig = 2 },
+					[Module.ArrayContributions.Visit] = { 'RegionPart2' },
 				},
 				CreateBaseDisplay(
 					'Subjugate 1 Rig NPCs!',
@@ -294,19 +324,21 @@ function Module:IsSubQuestCompletedFromUUID( questUUID, playerData )
 		return false
 	end
 
-	for _, contribData in pairs( subQuestConfig.Contributions ) do
-		if #contribData == 0 then
+	for contribType, contributions in pairs( subQuestConfig.Contributions ) do
+		if #contributions == 0 then
 			-- dictionary
-			for contribId, requiredAmount in pairs( contribData ) do
-				local currentAmount = questData.Contributions[ contribId ] or 0
+			for contribId, requiredAmount in pairs( contributions ) do
+				local contribArr = questData.Contributions[contribType]
+				local currentAmount = contribArr and contribArr[ contribId ] or 0
 				if currentAmount < requiredAmount then
 					return false
 				end
 			end
 		else
 			-- array
-			for _, contribId in ipairs( contribData ) do
-				if not table.find( questData.Contributions, contribId ) then
+			for _, contribId in ipairs( contributions ) do
+				local contribArr = questData.Contributions[contribType]
+				if not contribArr or not table.find( contribArr, contribId ) then
 					return false
 				end
 			end

@@ -168,13 +168,16 @@ function Module:AppendQuestContributions( LocalPlayer, contributionType, contrib
 			if not QuestsConfigModule:IsValidSubQuestContribution( questId, questData.SubQuestIndex, contributionType, contributionId ) then
 				continue
 			end
+			if not questData.Contributions[contributionType] then
+				questData.Contributions[contributionType] = { }
+			end
 			if QuestsConfigModule:IsArrayTypeContrib( contributionType ) then
-				table.insert( questData.Contributions, contributionId )
+				table.insert( questData.Contributions[contributionType], contributionId )
 			else
-				if questData.Contributions[ contributionId ] then
-					questData.Contributions[ contributionId ] += 1
+				if questData.Contributions[contributionType][ contributionId ] then
+					questData.Contributions[contributionType][ contributionId ] += 1
 				else
-					questData.Contributions[ contributionId ] = 1
+					questData.Contributions[contributionType][ contributionId ] = 1
 				end
 			end
 		end

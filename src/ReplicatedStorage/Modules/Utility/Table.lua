@@ -2,6 +2,21 @@
 -- // Module // --
 local Module = {}
 
+function Module:ShallowDeltaTable(old, new)
+	local changed = { }
+	for _, newValue in ipairs(new) do
+		if not table.find(old, newValue) then
+			changed[newValue] = true
+		end
+	end
+	for _, oldValue in ipairs(old) do
+		if not table.find(new, oldValue) then
+			changed[oldValue] = false
+		end
+	end
+	return changed
+end
+
 function Module:SetProperties(Parent, propertyTable)
 	if typeof(propertyTable) == 'table' then
 		for propertyName, propertyValue in pairs(propertyTable) do

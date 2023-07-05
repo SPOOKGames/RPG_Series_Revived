@@ -3,6 +3,8 @@ local WidgetsCache = {}
 
 local SystemsContainer = {}
 
+local DEFAULT_WIDGET_IGNORE_LIST = {"DialogueWidget"}
+
 -- // Module // --
 local Module = {}
 
@@ -23,7 +25,10 @@ function Module:ToggleWidget(widgetName, enabled)
 end
 
 function Module:ToggleAllWidgets(enabled)
-	for _, WidgetModule in pairs( WidgetsCache ) do
+	for widgetName, WidgetModule in pairs( WidgetsCache ) do
+		if table.find(DEFAULT_WIDGET_IGNORE_LIST, widgetName) then
+			continue
+		end
 		if enabled then
 			if not WidgetModule.Open then
 				WidgetModule:OpenWidget()
