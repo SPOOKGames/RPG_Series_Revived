@@ -2,6 +2,21 @@
 -- // Module // --
 local Module = {}
 
+function Module:ArrayPopFirstOf( Array, Value )
+	local index = table.find(Array, Value)
+	if index then
+		table.remove(Array, index)
+	end
+end
+
+function Module:DictPopFirstOf( Dict, Value )
+	for dictIndex, dictValue in pairs(Dict) do
+		if dictValue == Value then
+			Dict[dictIndex] = nil
+		end
+	end
+end
+
 function Module:ShallowDeltaTable(old, new)
 	local changed = { }
 	for _, newValue in ipairs(new) do

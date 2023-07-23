@@ -20,6 +20,19 @@ local TemplateData = {
 	Attributes = { },
 	Inventory = { },
 
+	ActiveEquipment = {
+		Hat = { },
+		Chest = { },
+		Waist = { },
+		Back = { },
+		Legs = { },
+		Feet = { },
+		-- [1] = { ItemId = false, UUID = false, }
+		-- 1 = left hand, 2 = right hand
+		Weapon = { },
+		Mount = { },
+	},
+
 	Quests = {},
 	CompletedQuests =  {},
 }

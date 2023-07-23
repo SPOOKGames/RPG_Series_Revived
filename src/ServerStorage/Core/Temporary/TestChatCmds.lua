@@ -11,6 +11,7 @@ local ConsoleMessageEvent = RemoteService:GetRemote('MakeConsoleMessage', 'Remot
 local SystemsContainer = {}
 
 local PREFIX = ";;"
+local Whitelist = false -- { 00000, 00000, }
 
 -- // Module // --
 local Module = {}
@@ -43,7 +44,15 @@ function Module:ParseChatCmd( LocalPlayer, commandName, ... )
 
 	-- ITEMS
 	if commandName == "item_give_id" then
-		return SystemsContainer.InventoryServer:GiveQuantityOfItemIdToPlayer( LocalPlayer, Args[1], tonumber(Args[2]) )
+		for i, value in ipairs(Args) do
+			if tonumber( value ) then
+				continue
+			end
+			SystemsContainer.InventoryServer:GiveQuantityOfItemIdToPlayer(
+				LocalPlayer, value, tonumber(Args[i+1])
+			)
+		end
+		return "Success"
 	elseif commandName == "item_remove_uuid" then
 		return SystemsContainer.InventoryServer:RemoveItemOfUUID(LocalPlayer, unpack(Args))
 	end
@@ -95,7 +104,9 @@ end
 
 function Module:OnPlayerAdded( LocalPlayer )
 	LocalPlayer.Chatted:Connect(function(chatMessage)
-		Module:OnChatted( LocalPlayer, chatMessage )
+		if (not Whitelist) or table.find(Whitelist, LocalPlayer.UserId) then
+			Module:OnChatted( LocalPlayer, chatMessage )
+		end
 	end)
 end
 
@@ -103,6 +114,7 @@ function Module:Start()
 	for _, LocalPlayer in ipairs( Players:GetPlayers() ) do
 		Module:OnPlayerAdded(LocalPlayer)
 	end
+
 	Players.PlayerAdded:Connect(function(LocalPlayer)
 		Module:OnPlayerAdded(LocalPlayer)
 	end)

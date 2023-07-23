@@ -12,6 +12,8 @@ local function CreateBaseRarityDisplay( TitleText, Description, IconData, Rarity
 	}
 end
 
+local EmptyCFrame = CFrame.new()
+
 local DEFAULT_VIEWPORT_PRESETS = {
 	{
 		CameraCFrame = CFrame.new( Vector3.new(4.5, -0.5, 0), Vector3.new() ),
@@ -29,17 +31,15 @@ local Module = {}
 Module.Items = {
 
 	WoodenSword = {
-		--[[Tags = {
-			Equippable = { 2 },
-			Weapon = {
-				Type = 'Sword',
-				IsMagical = false, -- determines whether or not it "magically appears"
-				Damage = { 5, 9 },
-			},
-		},]]
+		Type = "Weapon",
 
 		Model = 'WoodenSword', -- set icon imagelabel visible to false, setup viewport model
 		ModelOffset = DEFAULT_HANDLE_ROTATION * CFrame.new(0, 0, 1.25),
+
+		EquipData = {
+			Slots = { 1 },
+			IsDualWield = true, -- only for weapons
+		},
 
 		MaxQuantity = 1,
 		Rarity = 1,
@@ -48,23 +48,36 @@ Module.Items = {
 	},
 
 	WoodenBow = {
-		--[[Tags = {
-			Equippable = { 1 },
-			Weapon = {
-				Type = 'Bow',
-				Damage = { 3, 7 },
-				IsMagical = false,
-				ProjectileID = 'Default',
-			},
-		},]]
+		Type = "Weapon",
 
 		Model = 'WoodenBow', -- set icon imagelabel visible to false, setup viewport model
 		ModelOffset = DEFAULT_HANDLE_ROTATION * CFrame.new(0, 0, -0.1),
+
+		EquipData = {
+			Slots = { 2 },
+			IsDualWield = true, -- only for weapons
+		},
 
 		MaxQuantity = 1,
 		Rarity = 1,
 
 		Display = CreateBaseRarityDisplay( 'WOODEN BOW', 'Basic Wooden Bow!', DEFAULT_VIEWPORT_PRESETS[2], 1 ),
+	},
+
+	BlockHead = {
+		Type = "Hat",
+
+		Model = 'BlockHead', -- set icon imagelabel visible to false, setup viewport model
+		ModelOffset = EmptyCFrame,
+
+		EquipData = {
+			BodyPart = "Head", -- only for accessories, what to weld to
+		},
+
+		MaxQuantity = 1,
+		Rarity = 1,
+
+		Display = CreateBaseRarityDisplay( 'BLOCK HEAD', "You're such a blockhead!", DEFAULT_VIEWPORT_PRESETS[2], 1 ),
 	},
 
 }

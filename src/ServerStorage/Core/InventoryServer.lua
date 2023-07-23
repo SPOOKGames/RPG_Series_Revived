@@ -4,7 +4,12 @@ local HttpService = game:GetService('HttpService')
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild("Modules"))
 
+local RemoteService = ReplicatedModules.Services.RemoteService
+local InventoryEquipRemote = RemoteService:GetRemote("InventoryEquipEvent", "RemoteEvent", false)
+
 local ItemsConfigModule = ReplicatedModules.Data.Items
+local EquipmentConfigModule = ReplicatedModules.Data.Equipment
+local TableUtility = ReplicatedModules.Utility.Table
 
 local SystemsContainer = {}
 
@@ -75,8 +80,103 @@ function Module:GiveQuantityOfItemIdToPlayer( LocalPlayer, itemId, quantity )
 		profile.Data.Inventory[ itemId ][ newUUID ] = Module:CreateGenericItemStackData( amount )
 		quantity -= amount
 	end
+end
 
-	print( profile.Data.Inventory )
+function Module:EquipItemOfUUID( LocalPlayer, itemUUID, customSlot )
+	local playerProfile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
+	if not playerProfile then
+		return
+	end
+
+	local itemId = UUIDToItemIdCache[ LocalPlayer ][ itemUUID ]
+	if not itemId then
+		print("no such item in player inventory; ", itemUUID)
+		return
+	end
+
+	local itemConfig = ItemsConfigModule:GetConfigFromId( itemId )
+	if not itemConfig then
+		print("Could not find config for item of id: ", tostring(itemId))
+		return
+	end
+
+	local itemEquipData = itemConfig.EquipData
+	if not itemEquipData then
+		print("could not find item equip data; ", itemId)
+		return
+	end
+
+	local ActiveEquipment = playerProfile.Data.ActiveEquipment
+
+	-- if slots need to be cleared, clear them now
+	if itemConfig.Type == "Weapon" then
+		if not table.find(itemEquipData.Slots, customSlot) then
+			print("could not equip weapon in slot, unavailable for this weapon. ", customSlot)
+			return
+		end
+
+		-- check if this item can dual wield
+		local canDualWield = itemEquipData.IsDualWield
+
+		-- check if currently equipped items can dual wield with new equipped item
+		if canDualWield then
+			for _, weaponData in pairs( ActiveEquipment.Weapon ) do
+				local weaponSlotConfig = ItemsConfigModule:GetConfigFromId( weaponData.ID )
+				canDualWield = weaponSlotConfig.EquipData.IsDualWield
+				if not canDualWield then
+					break
+				end
+			end
+		end
+
+		-- if cannot dual wield, unequip currently equipped items
+		if not canDualWield then
+			print("unequip others weapons - not dual wield")
+			for _, weaponData in pairs( ActiveEquipment.Weapon ) do
+				print( LocalPlayer, 'unequip bc dual wield false', itemConfig.Type, itemId, customSlot )
+				SystemsContainer.EquipmentRendererServer:RemoveRenderSlotItem( LocalPlayer, 'Weapon', weaponData.UUID )
+			end
+		end
+
+	else -- check max number of equipped
+		if TableUtility:CountDictionary( ActiveEquipment[ itemConfig.Type ] ) + 1 > EquipmentConfigModule.MaxEquipped[ itemConfig.Type ] then
+			print("cannot equip - maximum items equipped.")
+			return
+		end
+	end
+
+	-- if yes, equip it via EquipmentRendererServer
+	SystemsContainer.EquipmentRendererServer:AppendRenderSlotItem( LocalPlayer, itemConfig.Type, itemUUID, itemId, customSlot )
+end
+
+function Module:IsItemEquipped( LocalPlayer, itemUUID )
+	local profile = SystemsContainer.DataServer:GetProfileFromPlayer( LocalPlayer )
+	if not profile then
+		return false
+	end
+
+	local itemId = Module:FindItemIdGivenUUID( LocalPlayer, itemUUID )
+	if not itemId then
+		print('no such item in inventory; ', itemUUID)
+		return false
+	end
+
+	local itemConfig = ItemsConfigModule:GetConfigFromId( itemId )
+	if not itemConfig then
+		print("Could not find config for item of id: ", tostring(itemId))
+		return false
+	end
+
+	if itemConfig.Type == "Weapon" then
+		for _, weaponData in pairs( profile.Data.ActiveEquipment.Weapon ) do
+			if weaponData.UUID == itemUUID then
+				return true, itemConfig.Type--, weaponSlot
+			end
+		end
+		return false
+	end
+
+	return profile.Data.ActiveEquipment[ itemConfig.Type ][ itemUUID ] ~= nil, itemConfig.Type
 end
 
 function Module:RemoveItemOfUUID( LocalPlayer, ItemUUID )
@@ -90,8 +190,15 @@ function Module:RemoveItemOfUUID( LocalPlayer, ItemUUID )
 		return
 	end
 
+	-- remove from inventory and cache
 	UUIDToItemIdCache[ LocalPlayer ][ ItemUUID ] = nil
 	profile.Data.Inventory[ ItemId ][ ItemUUID ] = nil
+
+	-- unequip active weapons / armor
+	print( LocalPlayer, 'unequip uuid', ItemUUID )
+	for slotId, _ in pairs( profile.Data.ActiveEquipment ) do
+		SystemsContainer.EquipmentRendererServer:RemoveRenderSlotItem( LocalPlayer, slotId, ItemUUID )
+	end
 end
 
 function Module:FindItemIdGivenUUID( LocalPlayer, ItemUUID )
@@ -115,6 +222,17 @@ function Module:Start()
 			Module:OnPlayerAdded( LocalPlayer )
 		end)
 	end
+
+	InventoryEquipRemote.OnServerEvent:Connect(function( LocalPlayer, itemUUID, customIndex )
+		
+		local isEquipped, slotId = Module:IsItemEquipped( LocalPlayer, itemUUID )
+		if isEquipped then
+			SystemsContainer.EquipmentRendererServer:RemoveRenderSlotItem( LocalPlayer, slotId, itemUUID )
+		else
+			Module:EquipItemOfUUID( LocalPlayer, itemUUID, customIndex )
+		end
+	end)
+
 	Players.PlayerAdded:Connect(function( LocalPlayer )
 		Module:OnPlayerAdded( LocalPlayer )
 	end)
